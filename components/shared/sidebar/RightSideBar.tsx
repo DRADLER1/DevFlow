@@ -28,16 +28,16 @@ const hotQuestions = [
 ];
 
 const popularTags = [
-  { _id: 1, name: "javascript", totalQuestion: 5 },
-  { _id: 2, name: "react", totalQuestion: 2 },
-  { _id: 3, name: "next", totalQuestion: 3 },
-  { _id: 4, name: "html", totalQuestion: 1 },
-  { _id: 5, name: "css", totalQuestion: 6 },
+  { _id: "1", name: "javascript", totalQuestion: 5 },
+  { _id: "2", name: "react", totalQuestion: 2 },
+  { _id: "3", name: "next", totalQuestion: 3 },
+  { _id: "4", name: "html", totalQuestion: 1 },
+  { _id: "5", name: "css", totalQuestion: 6 },
 ];
 
 const RightSideBar = () => {
   return (
-    <section className="custom-scrollbar background-light900_dark200 light-border fixed right-0 top-0 flex h-screen w-[350px] flex-col  overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden ">
+    <section className="custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] flex-col  overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden ">
       <div>
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
         <div className="mt-7 flex w-full flex-col gap-[30px]">
