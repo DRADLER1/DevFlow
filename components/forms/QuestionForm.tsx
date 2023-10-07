@@ -23,12 +23,20 @@ import { QuestionsFormSchema } from "@/lib/validation";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useRouter, usePathname } from "next/navigation";
 
 const type: any = "create";
 
-const QuestionForm = () => {
+interface Props {
+  mongoUserId: string;
+}
+
+const QuestionForm = ({ mongoUserId }: Props) => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsFormSchema>>({
@@ -48,8 +56,16 @@ const QuestionForm = () => {
       // make an async call to your API -> create a question
       // contain all form data
 
-      await createQuestion({});
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+        path: pathname,
+      });
       // navigate to home page
+
+      router.push("/");
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -170,7 +186,8 @@ const QuestionForm = () => {
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Introduce the problem and expand on what you put in the title.Minimum 100 characters.
+                Introduce the problem and expand on what you put in the
+                title.Minimum 100 characters.
               </FormDescription>
               <FormMessage className="text-red-500" />
             </FormItem>
