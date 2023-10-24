@@ -1,17 +1,14 @@
 import HomeFilter from "@/components/home/HomeFilter";
 import Filters from "@/components/shared/filters/Filters";
 import NoResult from "@/components/shared/notResults/NoResult";
-import QuestionCard from "@/components/shared/cards/QuestionCard";
+import QuestionCard from "@/components/cards/QuestionCard";
 import LocalSearchBar from "@/components/shared/search/LocalSearchBar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
 
-
-
-const Home = async() => {
-
+const Home = async () => {
   const result = await getQuestions({});
 
   // const questions =  result?.questions;
@@ -47,7 +44,7 @@ const Home = async() => {
       <HomeFilter />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        { result?.questions && result.questions.length > 0 ? (
+        {result?.questions && result.questions.length > 0 ? (
           result.questions.map((question) => (
             <QuestionCard
               key={question._id}
