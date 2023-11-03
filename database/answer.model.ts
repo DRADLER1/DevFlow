@@ -1,6 +1,6 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model, models , Document} from "mongoose";
 
-interface IAnswer {
+interface IAnswer  extends Document{
   author: Schema.Types.ObjectId;
   question: Schema.Types.ObjectId;
   content: string;

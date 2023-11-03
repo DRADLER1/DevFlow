@@ -16,8 +16,8 @@ const TagCard = ({ tag }: Props) => {
       className="shadow-light100_darknone "
     >
       <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-[260px]">
-        <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5 capitalize">
-          {tag.name}
+        <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5 capitalize ">
+          <p className="paragraph-semibold text-dark300_light900">{tag.name}</p>
         </div>
         <p className="small-regular text-dark500_light700 mt-4">
           JavaScript, often abbreviated as JS, is a programming language that is

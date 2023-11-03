@@ -24,7 +24,6 @@ const Page = async ({ params, searchParams }) => {
 
   const result = await getQuestionById({ questionId: params.id });
 
-  // console.log({mongoUser , result})
 
   return (
     <>

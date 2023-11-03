@@ -25,7 +25,6 @@ const AllAnswers = async ({
     questionId,
   });
 
-  console.log(result?.answers)
 
 
   return (
