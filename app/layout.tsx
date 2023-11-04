@@ -1,9 +1,11 @@
 import "./globals.css";
+import "@/styles/prism.css"
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import React from "react";
 import { ThemeProvider } from "@/context/ThemeProvider";
+
 
 const inter = Inter({
   subsets: ["latin"],

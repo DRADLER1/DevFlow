@@ -1,6 +1,6 @@
 import Link from "next/link";
-import RenderTag from "../tag/RenderTag";
-import Metric from "../metric/Metric";
+import RenderTag from "../shared/tag/RenderTag";
+import Metric from "../shared/metric/Metric";
 import { formatNumber, getTimestamp } from "@/lib/utils";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   title: string;
   tags: { _id: string; name: string }[];
   author: { _id: string; name: string; picture: string };
-  upVotes: number;
+  upVotes: string[];
   views: number;
   answers: Array<object>;
   createdAt: Date;
@@ -49,7 +49,7 @@ const QuestionCard = ({
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3 ">
         <Metric
-          imgUrl="/assets/icons/avatar.svg"
+          imgUrl={author.picture}
           alt="user"
           value={author.name}
           title={` - asked ${getTimestamp(createdAt)}`}
@@ -60,7 +60,7 @@ const QuestionCard = ({
         <Metric
           imgUrl="/assets/icons/like.svg"
           alt="Upvotes"
-          value={formatNumber(upVotes)}
+          value={formatNumber(upVotes.length)}
           title=" Votes"
           textStyles="small-medium text-dark400_light800"
         />
