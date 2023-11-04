@@ -7,12 +7,13 @@ import RenderTag from "@/components/shared/tag/RenderTag";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { formatNumber, getTimestamp } from "@/lib/utils";
+import { URLProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Page = async ({ params, searchParams }) => {
+const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
 
   let mongoUser;
@@ -21,9 +22,7 @@ const Page = async ({ params, searchParams }) => {
     mongoUser = await getUserById({ userId: clerkId });
   }
 
-
   const result = await getQuestionById({ questionId: params.id });
-
 
   return (
     <>
