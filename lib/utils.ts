@@ -56,3 +56,13 @@ export const formatNumber = (input: number): string => {
     return `${input}`;
   }
 };
+
+
+export function getJoinedDate(date: Date): string {
+  const month = date.toLocaleString('en-us', { month: 'long' });
+  const year = date.getFullYear();
+  
+  return `${month} ${year}`;
+}
+
+

@@ -1,28 +1,22 @@
-import Link from "next/link";
-import RenderTag from "../shared/tag/RenderTag";
+import { getTimestamp, formatNumber } from "@/lib/utils";
 import Metric from "../shared/metric/Metric";
-import { formatNumber, getTimestamp } from "@/lib/utils";
+import Link from "next/link";
 
 interface Props {
   _id: string;
   title: string;
-  tags: { _id: string; name: string }[];
   author: { _id: string; name: string; picture: string };
   upVotes: string[];
-  views: number;
-  answers: Array<object>;
   createdAt: Date;
   clerkId?: string;
 }
-const QuestionCard = ({
+
+const AnswersCard = ({
   _id,
   title,
   clerkId,
-  tags,
   author,
   upVotes,
-  views,
-  answers,
   createdAt,
 }: Props) => {
   return (
@@ -43,12 +37,6 @@ const QuestionCard = ({
         {/** If signed in add edit delte actions */}
       </div>
 
-      <div className="mt-3.5 flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
-        ))}
-      </div>
-
       <div className="flex-between mt-6 w-full flex-wrap gap-3 ">
         <Metric
           imgUrl={author.picture}
@@ -66,23 +54,9 @@ const QuestionCard = ({
           title=" Votes"
           textStyles="small-medium text-dark400_light800"
         />
-        <Metric
-          imgUrl="/assets/icons/message.svg"
-          alt="message"
-          value={answers.length}
-          title=" Answers"
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          imgUrl="/assets/icons/eye.svg"
-          alt="eye"
-          value={formatNumber(views)}
-          title=" Views"
-          textStyles="small-medium text-dark400_light800"
-        />
       </div>
     </div>
   );
 };
 
-export default QuestionCard;
+export default AnswersCard;
