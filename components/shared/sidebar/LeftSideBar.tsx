@@ -39,9 +39,15 @@ const NavContent = () => {
               alt={item.label}
               width={20}
               height={20}
-              className="invert-colors"
+              className={isActive ? "" : "invert-colors"}
             />
-            <p className="max-lg:hidden">{item.label}</p>
+            <p
+              className={`${
+                isActive ? "base-bold" : "base-medium"
+              } max-lg:hidden`}
+            >
+              {item.label}
+            </p>
           </Link>
         );
       })}
@@ -51,7 +57,7 @@ const NavContent = () => {
 
 const LeftSideBar = () => {
   return (
-    <section className=" custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 flex h-screen w-fit flex-col justify-between  overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
+    <section className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
       <div className="flex flex-1 flex-col gap-6">
         <NavContent />
       </div>
