@@ -1,5 +1,5 @@
 import "./globals.css";
-import "@/styles/prism.css"
+import "@/styles/prism.css" 
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -40,7 +40,7 @@ export default function RootLayout({
           appearance={{
             elements: {
               formButtonPrimary: "primary-gradient",
-              footerActionLink: "primary-text-gradient hover: text-primary-500",
+              footerActionLink: "primary-text-gradient hover:text-primary-500",
             },
           }}
         >

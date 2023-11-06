@@ -22,17 +22,18 @@ import { Button } from "../ui/button";
 import { QuestionsFormSchema } from "@/lib/validation";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeProvider";
 
-const type: any = "create";
 
 interface Props {
+  type?: string;
   mongoUserId: string;
+  questionDetails?: string;
 }
 
-const QuestionForm = ({ mongoUserId }: Props) => {
+const QuestionForm = ({ type, mongoUserId, questionDetails }: Props) => {
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,13 +41,16 @@ const QuestionForm = ({ mongoUserId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const parsedQuestionDetails = questionDetails && JSON.parse(questionDetails || '');
+  const groupedTags =  parsedQuestionDetails?.tags.map((tag: any) => tag.name)
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsFormSchema>>({
     resolver: zodResolver(QuestionsFormSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: parsedQuestionDetails?.title || "",
+      explanation: parsedQuestionDetails?.content || "",
+      tags: groupedTags || [],
     },
   });
 
@@ -58,16 +62,26 @@ const QuestionForm = ({ mongoUserId }: Props) => {
       // make an async call to your API -> create a question
       // contain all form data
 
-      await createQuestion({
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId),
-        path: pathname,
-      });
-      // navigate to home page
+      if (type == "Edit") {
+        await editQuestion({
+          questionId: parsedQuestionDetails._id,
+          title: values.title,
+          content: values.explanation,
+          path: pathname,
+        });
+        router.push(`/question/${parsedQuestionDetails._id}`);
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname,
+        });
+        // navigate to home page
 
-      router.push("/");
+        router.push("/");
+      }
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -155,7 +169,7 @@ const QuestionForm = ({ mongoUserId }: Props) => {
                     // @ts-ignore
                     (editorRef.current = editor)
                   }
-                  initialValue=""
+                  initialValue={parsedQuestionDetails?.content || ""}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
@@ -184,14 +198,14 @@ const QuestionForm = ({ mongoUserId }: Props) => {
                       "codesample | bold italic forecolor | alignleft aligncenter |" +
                       "alignright alignjustify | bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
-                    skin: mode === 'dark'? 'oxide-dark' : 'oxide',
-                    content_css: mode === 'dark'? 'dark' : 'light',
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you put in the
-                title.Minimum 100 characters.
+                title.Minimum 20 characters.
               </FormDescription>
               <FormMessage className="text-red-500" />
             </FormItem>
@@ -210,6 +224,7 @@ const QuestionForm = ({ mongoUserId }: Props) => {
                 <>
                   <Input
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
+                    disabled={type === "Edit"}
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     placeholder="Add tags..."
                   />
@@ -220,18 +235,22 @@ const QuestionForm = ({ mongoUserId }: Props) => {
                         <Badge
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-dark400_light500 flex-center gap-2 rounded-md border-none px-4 py-2 capitalize"
-                          onClick={() => {
-                            handleTagRemove(tag, field);
-                          }}
+                          onClick={() =>
+                            type !== "Edit"
+                              ? handleTagRemove(tag, field)
+                              : () => {}
+                          }
                         >
                           {tag}{" "}
-                          <Image
-                            src="assets/icons/close.svg"
-                            alt="Close icon"
-                            width={12}
-                            height={12}
-                            className="cursor-pointer object-contain invert-0 dark:invert"
-                          />
+                          {type === "create" && (
+                            <Image
+                              src="assets/icons/close.svg"
+                              alt="Close icon"
+                              width={12}
+                              height={12}
+                              className="cursor-pointer object-contain invert-0 dark:invert"
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>
@@ -252,9 +271,9 @@ const QuestionForm = ({ mongoUserId }: Props) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+            <>{type === "Edit" ? "Editing..." : "Posting..."}</>
           ) : (
-            <>{type === "edit" ? "Editing Question" : "Ask a Question"}</>
+            <>{type === "Edit" ? "Edit Question" : "Ask a Question"}</>
           )}
         </Button>
       </form>
