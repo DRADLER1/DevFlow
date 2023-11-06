@@ -160,49 +160,61 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
   }
 }
 
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    connectToDatabase();
 
-export async function deleteQuestion(params: DeleteQuestionParams){
-  try{
-    connectToDatabase()
+    const { questionId, path } = params;
 
-    const { questionId ,path } = params
+    await Question.deleteOne({ _id: questionId });
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
 
-    await Question.deleteOne({_id: questionId})
-    await Answer.deleteMany({question: questionId})
-    await Interaction.deleteMany({question: questionId})
-    await Tag.updateMany({questions: questionId}, {$pull: {questions: questionId}})
-
-    revalidatePath(path)
-
-  }catch(error){
-    console.log(error)
-    throw error
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
 
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    connectToDatabase();
+    const { questionId, title, content, path } = params;
 
-export async function editQuestion(params : EditQuestionParams){
-  try{
+    const question = await Question.findById(questionId).populate("tags");
 
-    connectToDatabase()
-    const { questionId, title, content, path } = params
-
-    const question = await Question.findById(questionId).populate("tags")
-
-    if(!question){
-      throw new Error("Question not found")
+    if (!question) {
+      throw new Error("Question not found");
     }
 
-    question.title = title
-    question.content = content
+    question.title = title;
+    question.content = content;
 
+    await question.save();
 
-    await question.save()
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
-    revalidatePath(path)
-
-  }catch(error){
-    console.log(error)
-    throw error
+export async function getHotQuestions() {
+  try {
+    const hotQuestions = await Question.find({})
+      .sort({
+        views: -1,
+        upvotes: -1,
+      })
+      .limit(5);
+    return hotQuestions;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
