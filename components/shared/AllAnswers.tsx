@@ -36,7 +36,8 @@ const AllAnswers = async ({
       </div>
       <div>
         {result?.answers.map((answer) => (
-          <article key={answer._id} className="light-border border-b py-10">
+          <article key={answer._id} className="light-border border-b py-10" >
+            <span id = {answer._id} className = "hash-span"></span>
             <div className="flex items-center justify-between">
               <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 <Link

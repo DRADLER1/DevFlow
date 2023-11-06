@@ -18,6 +18,8 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
     router.push(`/question/edit/${JSON.parse(itemId)}`);
   };
 
+  console.log(itemId)
+
   const handleDelete = async () => {
     if (type === "Question") {
       //Delete question

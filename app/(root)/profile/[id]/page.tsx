@@ -51,7 +51,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               {userInfo.user.location && (
                 <>
                   <ProfileLink
-                    imgUrl="/assets/icons/locations.svg"
+                    imgUrl="/assets/icons/location.svg"
                     title={userInfo.user.location}
                   />
                 </>
@@ -97,7 +97,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               Answer
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="top-posts">
+          <TabsContent value="top-posts" className="flex w-full flex-col gap-6">
             <QuestionTab
               searchParams={searchParams}
               userId={userInfo.user._id}
