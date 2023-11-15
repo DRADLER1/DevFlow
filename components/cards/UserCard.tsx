@@ -1,8 +1,8 @@
 import { getTopInteractedTags } from "@/lib/actions/tag.actions";
 import Image from "next/image";
-import Link from "next/link";
 import { Badge } from "../ui/badge";
 import RenderTag from "../shared/tag/RenderTag";
+import Link from "next/link";
 
 interface Props {
   user: {
@@ -43,7 +43,7 @@ const UserCard = async ({ user }: Props) => {
         <div className="mt-5">
           {(interactedTags && interactedTags.length > 0 )? (
             <div className="flex items-center gap-2">
-              {interactedTags?.map((tag) => (
+              {interactedTags.map((tag) => (
                 <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
               ))}
             </div>
