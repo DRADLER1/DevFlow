@@ -1,13 +1,11 @@
 "use client";
 
-import { ThemeProvider, useTheme } from "@/context/ThemeProvider";
+import {  useTheme } from "@/context/ThemeProvider";
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import Image from "next/image";
@@ -38,7 +36,7 @@ const Theme = () => {
             />
           )}
         </MenubarTrigger>
-        <MenubarContent className="absolute right-[-3rem] mt-3 min-w-[120px] rounded border py-2 dark:border-dark-400 dark:bg-dark-300">
+        <MenubarContent className="absolute background-light900_dark300 right-[-3rem] mt-3 min-w-[120px] rounded border py-2 dark:border-dark-400 dark:bg-dark-300">
           {themes.map((theme) => (
             <MenubarItem
               key={theme.value}

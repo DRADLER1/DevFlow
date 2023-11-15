@@ -1,10 +1,21 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
- 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import qs from "query-string";
+
+interface UrlQueryParams {
+  params: string;
+  key: string;
+  value: string | null;
 }
 
+interface removeUrlQueryParams {
+  params: string;
+  keysToRemove: string[];
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const getTimestamp = (createdAt: Date): string => {
   const now = new Date();
@@ -28,22 +39,21 @@ export const getTimestamp = (createdAt: Date): string => {
 
   // Choose the appropriate unit and return the formatted string
   if (years > 0) {
-    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+    return `${years} ${years === 1 ? "year" : "years"} ago`;
   } else if (months > 0) {
-    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    return `${months} ${months === 1 ? "month" : "months"} ago`;
   } else if (weeks > 0) {
-    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
   } else if (days > 0) {
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    return `${days} ${days === 1 ? "day" : "days"} ago`;
   } else if (hours > 0) {
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
   } else if (minutes > 0) {
-    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
   } else {
-    return 'Just now';
+    return "Just now";
   }
 };
-
 
 export const formatNumber = (input: number): string => {
   if (input >= 1000000) {
@@ -57,12 +67,42 @@ export const formatNumber = (input: number): string => {
   }
 };
 
-
 export function getJoinedDate(date: Date): string {
-  const month = date.toLocaleString('en-us', { month: 'long' });
+  const month = date.toLocaleString("en-us", { month: "long" });
   const year = date.getFullYear();
-  
+
   return `${month} ${year}`;
 }
+
+export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+  const currentUrl = qs.parse(params);
+
+  currentUrl[key] = value;
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentUrl,
+    },
+    { skipNull: true }
+  );
+};
+
+
+export const removeKeysFromQuery = ({ params, keysToRemove }: removeUrlQueryParams) => {
+  const currentUrl = qs.parse(params);
+
+  keysToRemove.forEach((key) => {
+    delete currentUrl[key];
+  })
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentUrl,
+    },
+    { skipNull: true }
+  );
+};
 
 
