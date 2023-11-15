@@ -15,8 +15,8 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
 
-    const {page = 1 , pageSize = 20 , filter , searchQuery} = params;
-    const query : FilterQuery<typeof Tag> = {};
+    const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const query: FilterQuery<typeof Tag> = {};
 
     if (searchQuery) {
       query.$or = [
@@ -25,8 +25,24 @@ export async function getAllTags(params: GetAllTagsParams) {
       ];
     }
 
+    let sortOptions = {};
 
-    const tags = await Tag.find(query).sort({ createdAt: -1 });
+    switch (filter) {
+      case "popular":
+        sortOptions = { questions: -1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "name":
+        sortOptions = { name: 1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+    }
+
+    const tags = await Tag.find(query).sort(sortOptions);
     return { tags };
   } catch (error) {
     console.log(error);
@@ -97,7 +113,7 @@ export async function getPopularTags() {
       { $limit: 5 },
     ]);
 
-    return popularTags
+    return popularTags;
   } catch (error) {
     console.log(error);
     throw error;

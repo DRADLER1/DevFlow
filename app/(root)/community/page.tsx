@@ -7,7 +7,8 @@ import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
-  const result = await getAllUsers({ searchQuery: searchParams.q });
+  const result = await getAllUsers({ searchQuery: searchParams.q , 
+    filter: searchParams.filter });
 
   return (
     <>
