@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import GlobalResult from "./GlobalResult";
@@ -15,30 +15,55 @@ const GlobalSearch = () => {
   const query = searchParams.get("q");
   const [search, setSearch] = useState(query || "");
   const [isOpen, setIsOpen] = useState(false);
+  const searchContainerRef = useRef(null);
+
+ 
+  useEffect(() => {
+    const handleOutsideClick = (event: any) => {
+      if(searchContainerRef.current &&
+      // @ts-ignore
+      !searchContainerRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+        setSearch('')
+      }
+    }
+
+    setIsOpen(false);
+
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick)
+    }
+  }, [pathname]) 
+
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (search) {
+      if(search) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
-          key: "global",
-          value: search,
-        });
+          key: 'global',
+          value: search
+        })
+
         router.push(newUrl, { scroll: false });
       } else {
-        if (query) {
+        if(query) {
           const newUrl = removeKeysFromQuery({
             params: searchParams.toString(),
-            keysToRemove: ['global' , 'type'],
-          });
+            keysToRemove: ['global', 'type']
+          })
 
           router.push(newUrl, { scroll: false });
         }
+
       }
     }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, pathname, router, searchParams, query]);
+    
+    return () => clearTimeout(delayDebounceFn)
+  }, [search, router, pathname, searchParams, query])
 
   return (
     <div className="relative w-full max-w-[600px] max-lg:hidden">
