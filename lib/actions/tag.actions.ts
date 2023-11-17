@@ -15,7 +15,7 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
 
-    const { page = 1, pageSize = 2, filter, searchQuery } = params;
+    const { page = 1, pageSize = 10, filter, searchQuery } = params;
     const skipAmount = (page - 1) * pageSize;
     const query: FilterQuery<typeof Tag> = {};
 
