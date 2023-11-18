@@ -25,10 +25,8 @@ const AllAnswers = async ({
   const result = await getAnswer({
     questionId,
     page: page ? +page : 1,
-    sortBy:filter
+    sortBy: filter,
   });
-
-
 
   return (
     <div className="mt-11">
@@ -39,8 +37,8 @@ const AllAnswers = async ({
       </div>
       <div>
         {result?.answers.map((answer) => (
-          <article key={answer._id} className="light-border border-b py-10" >
-            <span id = {answer._id} className = "hash-span"></span>
+          <article key={answer._id} className="light-border border-b py-10">
+            <span id={answer._id} className="hash-span"></span>
             <div className="flex items-center justify-between">
               <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 <Link
