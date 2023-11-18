@@ -27,10 +27,10 @@ const Filters = ({ filters, otherClasses, containerClasses }: Props) => {
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
       key: "filter",
-      value
+      value,
     });
 
-    router.push(newUrl , {scroll : false});
+    router.push(newUrl, { scroll: false });
   };
 
   return (
@@ -46,10 +46,14 @@ const Filters = ({ filters, otherClasses, containerClasses }: Props) => {
             <SelectValue placeholder="Select a Filter" />
           </div>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300">
           <SelectGroup>
             {filters.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
+              <SelectItem
+                key={item.value}
+                value={item.value}
+                className="focus:bg-light-800 dark:focus:bg-dark-400 cursor-pointer"
+              >
                 {item.name}
               </SelectItem>
             ))}
