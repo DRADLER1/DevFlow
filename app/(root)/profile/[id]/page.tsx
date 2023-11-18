@@ -15,7 +15,10 @@ import React from "react";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
-  const userInfo = await getUserInfo({ userId: params.id });
+  const userInfo = await getUserInfo({
+    userId: params.id,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
 
   return (
     <>
@@ -84,8 +87,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
       </div>
       <Stats
+        reputation={userInfo.reputation}
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
+        badges={userInfo.badgeCounts}
       />
       <div className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-1">

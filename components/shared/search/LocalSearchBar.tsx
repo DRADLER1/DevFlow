@@ -26,10 +26,6 @@ const LocalSearchBar = ({
   const searchParams = useSearchParams();
 
   const query = searchParams.get("q");
-  // console.log(query);
-  // console.log({pathname , router})
-  // console.log(router)
-
   const [search, setSearch] = useState(query || "");
 
   useEffect(() => {
@@ -77,7 +73,7 @@ const LocalSearchBar = ({
         onChange={(e) => {
           setSearch(e.target.value);
         }}
-        className="paragraph-regular no-focus placeholder  background-light800_darkgradient border-none shadow-none outline-none"
+        className="paragraph-regular no-focus placeholder  bg-transparent text-dark400_light700 border-none shadow-none outline-none"
       />
 
       {iconPosition === "right" && (

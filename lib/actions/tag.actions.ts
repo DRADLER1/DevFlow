@@ -10,13 +10,15 @@ import {
 } from "./shared.types";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
+import Interaction from "@/database/interaction.model";
 
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
 
-    const {page = 1 , pageSize = 20 , filter , searchQuery} = params;
-    const query : FilterQuery<typeof Tag> = {};
+    const { page = 1, pageSize = 10, filter, searchQuery } = params;
+    const skipAmount = (page - 1) * pageSize;
+    const query: FilterQuery<typeof Tag> = {};
 
     if (searchQuery) {
       query.$or = [
@@ -25,9 +27,32 @@ export async function getAllTags(params: GetAllTagsParams) {
       ];
     }
 
+    let sortOptions = {};
 
-    const tags = await Tag.find(query).sort({ createdAt: -1 });
-    return { tags };
+    switch (filter) {
+      case "popular":
+        sortOptions = { questions: -1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "name":
+        sortOptions = { name: 1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+    }
+
+    const tags = await Tag.find(query)
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOptions);
+
+    const totalTags = await Tag.countDocuments(query);
+
+    const isNext = totalTags > skipAmount + tags.length;
+    return { tags  , isNext};
   } catch (error) {
     console.log(error);
     throw error;
@@ -36,21 +61,35 @@ export async function getAllTags(params: GetAllTagsParams) {
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
-    const { userId } = params;
+    const { userId, limit = 3 } = params;
 
+    // Find the user by clerkId
     const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
 
-    // Find interactions for the user and group by tags....
+    // Find interactions for the user and group by tags
+    const tagCountMap = await Interaction.aggregate([
+      { $match: { user: user._id, tags: { $exists: true, $ne: [] } } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+    ]);
 
-    return [
-      { _id: "1", name: "tag1" },
-      { _id: "2", name: "tag2" },
-    ];
+    const topTags = tagCountMap.map((tagCount) => tagCount._id);
 
-    if (!user) throw new Error("User not found");
-  } catch (error) {}
+    // Find the tag documents for the top tags
+    const topTagDocuments = await Tag.find({ _id: { $in: topTags } });
+
+    return topTagDocuments;
+  } catch (error) {
+    console.error("Error fetching top interacted tags:", error);
+    throw error;
+  }
 }
 
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
@@ -58,6 +97,7 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     connectToDatabase();
 
     const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+    const skipAmount = (page - 1) * pageSize;
 
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
@@ -69,6 +109,8 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
         : {},
       options: {
         sort: { createdAt: -1 },
+        skip: skipAmount,
+        limit: pageSize + 1,
       },
       populate: [
         { path: "tags", model: Tag, select: "_id name" },
@@ -78,9 +120,11 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
 
     if (!tag) throw new Error("Tag not found");
 
+    const  isNext = tag.questions.length > pageSize;
+
     const questions = tag.questions;
 
-    return { tagTitle: tag.name, questions };
+    return { tagTitle: tag.name, questions , isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -97,7 +141,7 @@ export async function getPopularTags() {
       { $limit: 5 },
     ]);
 
-    return popularTags
+    return popularTags;
   } catch (error) {
     console.log(error);
     throw error;

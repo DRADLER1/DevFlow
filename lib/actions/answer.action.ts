@@ -11,6 +11,7 @@ import {
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 import Interaction from "@/database/interaction.model";
+import User from "@/database/user.model";
 
 export async function createAnswer(params: CreateAnswerParams) {
   try {
@@ -21,11 +22,21 @@ export async function createAnswer(params: CreateAnswerParams) {
 
     // ADD THE ANSWER TO THE QUESTION's Answer ARRAY
 
-    await Question.findByIdAndUpdate(question, {
+    const questionObject = await Question.findByIdAndUpdate(question, {
       $push: { answers: newAnswer._id },
     });
 
     // TODO: ADD INTERACTION
+
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question,
+      answer: newAnswer._id,
+      tags: questionObject.tags,
+    });
+
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
 
     revalidatePath(path);
   } catch (error) {
@@ -36,12 +47,38 @@ export async function createAnswer(params: CreateAnswerParams) {
 
 export async function getAnswer(params: GetAnswersParams) {
   try {
-    const { questionId, sortBy, page, pageSize } = params;
+    const { questionId, sortBy, page = 1, pageSize = 10 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    let sortOptions = {};
+
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOptions = { upvotes: 1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+    }
 
     const answers = await Answer.find({ question: questionId })
       .populate("author", "_id clerkId name picture")
-      .sort({ createdAt: -1 });
-    return { answers };
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+
+    const isNext = totalAnswers > skipAmount + answers.length;
+
+    return { answers, isNext };
   } catch (error) {
     console.log(error);
   }
@@ -74,6 +111,15 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
       throw new Error("Answer not found");
     }
 
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -2 : 2 },
+    });
+
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
+
+    await
     revalidatePath(path);
   } catch (error) {
     console.log(error);
@@ -106,6 +152,14 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     if (!answer) {
       throw new Error("Answer not found");
     }
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? -2 : 2 },
+    });
+
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
