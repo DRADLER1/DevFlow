@@ -88,6 +88,15 @@ const AnswerForm = ({ question, questionId, authorId }: Props) => {
         editor.setContent(formattedAnswer);
       }
 
+
+
+      // console.log(process.env.MONGODB_URL)
+
+
+    
+
+
+
       // Toast
     } catch (error) {
       console.log(error);

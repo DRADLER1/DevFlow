@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { formUrlQuery } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { undefined } from "zod";
 
 interface Props {
   filters: { name: string; value: string }[];
@@ -43,13 +42,13 @@ const Filters = ({ filters, otherClasses, containerClasses }: Props) => {
             <SelectValue placeholder="Select a Filter" />
           </div>
         </SelectTrigger>
-        <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300">
+        <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300 max-h-[50vh] ">
           <SelectGroup>
             {filters.map((item) => (
               <SelectItem
                 key={item.value}
                 value={item.value}
-                className="focus:bg-light-800 dark:focus:bg-dark-400 cursor-pointer"
+                className="focus:bg-light-800 dark:focus:bg-dark-400 cursor-pointer "
               >
                 {item.name}
               </SelectItem>
