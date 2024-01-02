@@ -118,8 +118,8 @@ export interface CreateUserParams {
 }
 
 export interface GetUserByIdParams {
-  userId: string;
-  page?: number;
+  userId: string | undefined;
+  page?: number 
 }
 
 export interface GetAllUsersParams {

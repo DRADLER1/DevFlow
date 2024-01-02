@@ -16,8 +16,8 @@ import React from "react";
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
   const userInfo = await getUserInfo({
-    userId: params.id,
-    page: searchParams.page ? +searchParams.page : 1,
+    userId : params?.id,
+    page: searchParams?.page ? +searchParams?.page : 1,
   });
 
   return (
