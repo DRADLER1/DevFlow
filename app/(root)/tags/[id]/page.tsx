@@ -8,9 +8,9 @@ import React from "react";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const result = await getQuestionsByTagId({
-    tagId: params.id,
-    searchQuery: searchParams.q,
-    page: searchParams.page ? +searchParams.page : 1,
+    tagId: params?.id,
+    searchQuery: searchParams?.q,
+    page: searchParams?.page ? +searchParams?.page : 1,
   });
 
   return (
@@ -21,7 +21,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchBar
-          route={`/tags/${params.id}`}
+          route={`/tags/${params?.id}`}
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search Tag questions"

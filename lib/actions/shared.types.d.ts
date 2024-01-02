@@ -67,7 +67,7 @@ export interface CreateQuestionParams {
 }
 
 export interface GetQuestionByIdParams {
-  questionId: string;
+  questionId: string | undefined;
 }
 
 export interface QuestionVoteParams {
@@ -98,7 +98,7 @@ export interface GetAllTagsParams {
 }
 
 export interface GetQuestionsByTagIdParams {
-  tagId: string;
+  tagId: string  | undefined;
   page?: number;
   pageSize?: number;
   searchQuery?: string;

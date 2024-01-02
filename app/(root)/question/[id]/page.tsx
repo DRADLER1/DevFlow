@@ -22,7 +22,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
     mongoUser = await getUserById({ userId: clerkId });
   }
 
-  const result = await getQuestionById({ questionId: params.id });
+  const result = await getQuestionById({ questionId: params?.id });
 
   return (
     <>
